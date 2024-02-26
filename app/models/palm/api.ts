@@ -17,6 +17,8 @@
  * ==============================================================================
  */
 
+import {DialogMessage, DialogParams} from '@core/shared/interfaces';
+
 export const BLOCK_CONFIDENCE_THRESHOLDS = [
   'BLOCK_CONFIDENCE_THRESHOLD_UNSPECIFIED',
   'BLOCK_LOW_MEDIUM_AND_HIGH_HARM_CONFIDENCE',
@@ -71,44 +73,70 @@ const DEFAULT_DIALOG_PARAMS: ModelParams = {
   ...DEFAULT_PARAMS,
 };
 
-const API_URL = 'https://generativelanguage.googleapis.com/v1beta2';
+const PROJECT_ID = 'wordcraft-dhlab';
+const LOCATION_ID = 'europe-west3';
 
-const TEXT_MODEL_ID = 'text-bison-001';
-const TEXT_METHOD = 'generateText';
+const API_URL = `https://europe-west3-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/${LOCATION_ID}/publishers/google`;
 
-const DIALOG_MODEL_ID = 'chat-bison-001';
-const DIALOG_METHOD = 'generateMessage';
+const TEXT_MODEL_ID = 'text-bison@001';
+const TEXT_METHOD = 'predict';
 
-export async function callTextModel(params: ModelParams) {
+const DIALOG_MODEL_ID = 'chat-bison@001';
+const DIALOG_METHOD = 'predict';
+
+export async function callTextModel(prompt: string, params: ModelParams) {
   params = {
     ...DEFAULT_TEXT_PARAMS,
     ...params,
   };
-  return callApi(TEXT_MODEL_ID, TEXT_METHOD, params);
+
+  const query = {
+    instances: [
+      {
+        prompt: prompt,
+      },
+    ],
+    parameters: params,
+  };
+
+  return callApi(TEXT_MODEL_ID, TEXT_METHOD, query);
 }
 
-export async function callDialogModel(params: ModelParams) {
+export async function callDialogModel(
+  dialog: DialogParams,
+  params: ModelParams
+) {
   params = {
     ...DEFAULT_DIALOG_PARAMS,
     ...params,
   };
-  return callApi(DIALOG_MODEL_ID, DIALOG_METHOD, params);
+
+  const query = {
+    instances: [dialog],
+    parameters: params,
+  };
+
+  return callApi(DIALOG_MODEL_ID, DIALOG_METHOD, query);
 }
 
-export async function callApi(
-  modelId: string,
-  method: string,
-  params: Partial<ModelParams>
-) {
+export async function callApi(modelId: string, method: string, query: object) {
   const urlPrefix = `${API_URL}/models/${modelId}:${method}`;
   const url = new URL(urlPrefix);
-  url.searchParams.append('key', process.env.PALM_API_KEY);
 
   return fetch(url.toString(), {
     method: 'POST',
     headers: {
-      'Content-Type': 'text/plain',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.VERTEX_ACCESS_TOKEN}`,
     },
-    body: JSON.stringify(params),
+    body: JSON.stringify(query),
   });
 }
+
+export type TextBisonResponse = {
+  predictions: {content: string}[];
+};
+
+export type ChatBisonResponse = {
+  predictions: {candidates: Array<DialogMessage>}[];
+};

@@ -32,7 +32,7 @@ import {makePromptHandler as rewriteSentence} from './prompts/rewrite_sentence';
 import {makePromptHandler as suggestRewrite} from './prompts/suggest_rewrite';
 import {ModelResults} from '@core/shared/types';
 import {Model} from '../model';
-import {callTextModel, ModelParams} from './api';
+import {callTextModel, ModelParams, TextBisonResponse} from './api';
 import {
   createModelResults,
   dedupeResults,
@@ -130,20 +130,17 @@ export class PalmModel extends Model {
 
     const modelParams = {
       ...params,
-      prompt: {
-        text: promptText,
-      },
       temperature: temperature,
     };
 
     console.log('🚀 prompt text: ', promptText);
 
-    const res = await callTextModel(modelParams);
-    const response = await res.json();
+    const res = await callTextModel(promptText, modelParams);
+    const response: TextBisonResponse = await res.json();
     console.log('🚀 model results: ', response);
 
-    const responseText = response.candidates?.length
-      ? response.candidates.map((candidate) => candidate.output)
+    const responseText = response.predictions?.length
+      ? response.predictions.map((prediction) => prediction.content)
       : [];
 
     const results = createModelResults(responseText);

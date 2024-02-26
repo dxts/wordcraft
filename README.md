@@ -32,23 +32,30 @@ npm run dev
 
 # ☁️ API
 
-In order to run Wordcraft, you'll need a PaLM API key. Please follow the
-instructions at
-[developers.generativeai.google/tutorials/setup](https://developers.generativeai.google/tutorials/setup).
-Once you have your API key, create a .env file and add the key!
+You can create a project on Google Cloud and use Vertex AI to access the PaLM
+models. For more information, see
+[https://console.cloud.google.com/vertex-ai](https://console.cloud.google.com/vertex-ai).
+
+After creating a project and enabling VertexAI APIs. Login with the Google Cloud
+CLI locally and set the project to the one you created.
+
+```bash
+gcloud auth login
+gcloud config set project <PROJECT_ID>
+```
+
+Once authenticated, you can create a `.env` file in the root of the project and
+save an access token to it.
 
 ```bash
 touch .env
-echo "PALM_API_KEY=\"<INSERT_PALM_API_KEY>\"" > .env
+echo "VERTEX_ACCESS_TOKEN=\"$(gcloud auth print-access-token)\"" > .env
 ```
 
 Remember, use your API keys securely. Do not share them with others, or embed
 them directly in code that's exposed to the public! This application
 stores/loads API keys on the client for ease of development, but these should be
 removed in all production apps!
-
-You can find more information about the PaLM 2 API at
-[developers.generativeai.google](https://developers.generativeai.google/)
 
 # 🤖 App
 

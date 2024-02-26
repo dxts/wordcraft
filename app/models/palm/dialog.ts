@@ -19,7 +19,7 @@
 
 import {DialogParams} from '@core/shared/interfaces';
 import {DialogModel} from '../dialog_model';
-import {callDialogModel, ModelParams} from './api';
+import {callDialogModel, ChatBisonResponse, ModelParams} from './api';
 import {createModelResults} from '../utils';
 
 import {ContextService, StatusService} from '@services/services';
@@ -37,27 +37,26 @@ export class PalmDialogModel extends DialogModel {
   }
 
   override async query(
-    params: DialogParams,
-    modelParams: Partial<ModelParams> = {}
+    dialog: DialogParams,
+    params: Partial<ModelParams> = {}
   ) {
     let temperature = (params as any).temperature;
     temperature = temperature === undefined ? 0.7 : temperature;
 
-    const queryParams = {
-      ...modelParams,
+    const modelParams = {
+      ...params,
       candidateCount: 1,
-      prompt: {
-        messages: params.messages,
-      },
       temperature: temperature,
     };
 
-    const res = await callDialogModel(queryParams);
-    const response = await res.json();
+    const res = await callDialogModel(dialog, modelParams);
+    const response: ChatBisonResponse = await res.json();
     console.log('🚀 model results: ', response);
 
-    const responseText = response.candidates?.length
-      ? response.candidates.map((candidate) => candidate.content)
+    const responseText = response.predictions?.length
+      ? response.predictions.map(
+          (prediction) => prediction.candidates[0].content
+        )
       : [];
 
     const results = createModelResults(responseText);
