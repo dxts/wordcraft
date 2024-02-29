@@ -12,3 +12,5 @@ website/www/**
 
 **/.DS_Store
 dist/
+
+.vscode

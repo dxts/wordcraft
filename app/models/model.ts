@@ -31,6 +31,7 @@ import {
   RewriteSelectionPromptParams,
   RewriteSentencePromptParams,
   SuggestRewritePromptParams,
+  PropagateRewritePromptParams,
 } from '@core/shared/interfaces';
 import {WordcraftContext} from '../context';
 import {ContextService, StatusService} from '@services/services';
@@ -166,6 +167,12 @@ export abstract class Model {
 
   async suggestRewrite(
     params: SuggestRewritePromptParams
+  ): Promise<ModelResults> {
+    throw new Error('Not yet implemented');
+  }
+
+  async propagateRewrite(
+    params: PropagateRewritePromptParams
   ): Promise<ModelResults> {
     throw new Error('Not yet implemented');
   }

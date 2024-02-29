@@ -28,7 +28,8 @@ import {customElement, property} from 'lit/decorators.js';
 @customElement('wordcraft-error-message')
 export class ErrorMessageComponent extends MobxLitElement {
   @property({type: Object}) onClose = () => {};
-  @property({type: Object}) getMessage: () => TemplateResult = () => html``;
+  @property({type: Object}) getMessage: () => TemplateResult<any> = () =>
+    html``;
 
   static override get styles() {
     return css`

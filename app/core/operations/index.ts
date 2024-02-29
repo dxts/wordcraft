@@ -30,6 +30,7 @@ import {RewriteEndOfSentenceOperation} from './rewrite_end_of_sentence_operation
 import {RewriteSelectionOperation} from './rewrite_selection_operation';
 import {RewriteSentenceOperation} from './rewrite_sentence_operation';
 import {SuggestRewriteOperation} from './suggest_rewrite_operation';
+import {PropagateRewriteOperation} from './propagate_rewrite_operation';
 
 export {ChoiceOperation} from './choice_operation';
 export {Operation} from './operation';
@@ -48,4 +49,5 @@ export {
   RewriteSelectionOperation,
   RewriteSentenceOperation,
   SuggestRewriteOperation,
+  PropagateRewriteOperation,
 };

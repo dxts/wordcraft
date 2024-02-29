@@ -25,6 +25,7 @@ import {
   GenerateWithinSentencePromptParams,
   MetaPromptPromptParams,
   NextSentencePromptParams,
+  PropagateRewritePromptParams,
   ReplacePromptParams,
   RewriteEndOfSentencePromptParams,
   RewriteSelectionPromptParams,
@@ -40,7 +41,7 @@ const LOOKAHEAD = true;
  * the parameters needed for constructing model prompts.
  */
 export class OperationDataProcessor {
-  constructor(private readonly tokenLimit = 1000) {}
+  constructor(private readonly tokenLimit = 3000) {}
 
   /** Assume that the average word consists of N_TOKENS_PER_WORD tokens */
   get wordLimit(): number {
@@ -279,6 +280,30 @@ export class OperationDataProcessor {
       post,
       toRewrite,
       howToRewrite: controls.howToRewrite,
+    };
+  }
+
+  propagateRewrite(
+    operationData: OperationData,
+    controls: {
+      rewriteTo: string;
+    }
+  ): PropagateRewritePromptParams {
+    const beforeText = helpers.getTextBeforeCursor(operationData);
+    const afterText = helpers.getTextAfterCursor(operationData);
+
+    const rewriteFrom = helpers.getSelectedText(operationData);
+
+    const {before: pre, after: post} = this.getTruncatedBeforeAndAfter(
+      beforeText,
+      afterText
+    );
+
+    return {
+      pre,
+      post,
+      rewriteFrom,
+      rewriteTo: controls.rewriteTo,
     };
   }
 }

@@ -60,10 +60,34 @@ export function getMobiledocOptions(
     },
   };
 
+  const additionAtom = {
+    name: 'addition',
+    type: 'dom',
+    render: (data: {value: string}) => {
+      const {value} = data;
+      const element = document.createElement('span');
+      element.innerText = value;
+      element.className = 'addition-atom';
+      return element;
+    },
+  };
+
+  const deletionAtom = {
+    name: 'deletion',
+    type: 'dom',
+    render: (data: {value: string}) => {
+      const {value} = data;
+      const element = document.createElement('span');
+      element.innerText = value;
+      element.className = 'deletion-atom';
+      return element;
+    },
+  };
+
   const initialDoc = {
     version: '0.3.1',
     markups: [],
-    atoms: ['loading', 'choice', 'selection'],
+    atoms: ['loading', 'choice', 'selection', 'addition', 'deletion'],
     cards: [],
     sections: [[1, 'p', [[0, [], 0, defaultText]]]],
   };
@@ -71,7 +95,7 @@ export function getMobiledocOptions(
     mobiledoc: initialDoc,
     spellcheck: true,
     autofocus: false,
-    atoms: [loadingAtom, choiceAtom, selectionAtom],
+    atoms: [loadingAtom, choiceAtom, selectionAtom, additionAtom, deletionAtom],
     parserPlugins: [pasteHandler],
   };
 }

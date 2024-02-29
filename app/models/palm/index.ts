@@ -30,6 +30,7 @@ import {makePromptHandler as rewriteEndOfSentence} from './prompts/rewrite_end_o
 import {makePromptHandler as rewriteSelection} from './prompts/rewrite_selection';
 import {makePromptHandler as rewriteSentence} from './prompts/rewrite_sentence';
 import {makePromptHandler as suggestRewrite} from './prompts/suggest_rewrite';
+import {makePromptHandler as propagateRewrite} from './prompts/propagate_rewrite';
 import {ModelResults} from '@core/shared/types';
 import {Model} from '../model';
 import {callTextModel, ModelParams, TextBisonResponse} from './api';
@@ -165,4 +166,5 @@ export class PalmModel extends Model {
   override rewriteSelection = this.makePromptHandler(rewriteSelection);
   override rewriteSentence = this.makePromptHandler(rewriteSentence);
   override suggestRewrite = this.makePromptHandler(suggestRewrite);
+  override propagateRewrite = this.makePromptHandler(propagateRewrite);
 }

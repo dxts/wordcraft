@@ -86,6 +86,20 @@
   background-color: #d5ecff;
 }
 
+.addition-atom {
+  padding: 3px 0 3px 0;
+  border-radius: 6px;
+  background-color: #d5ffda;
+}
+
+.deletion-atom {
+  padding: 2px 2px 2px 2px;
+  border-radius: 6px;
+  background-color: #ffdad5;
+  text-decoration: line-through;
+  font-size: 80%;
+}
+
 .choice-atom:after {
   content: 'press ⏎ to accept';
   display: inline;

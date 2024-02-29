@@ -50,7 +50,8 @@ operationsService.registerOperations(
   Operations.ReplaceOperation,
   Operations.RewriteEndOfSentenceOperation,
   Operations.RewriteSelectionOperation,
-  Operations.RewriteSentenceOperation
+  Operations.RewriteSentenceOperation,
+  Operations.PropagateRewriteOperation
 );
 
 // Register prompts with models

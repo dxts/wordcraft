@@ -1,0 +1,66 @@
+[
+  {
+    "pre": "A dog walked along a trail, head down, teary eyed. No other creature in sight. The lonely ",
+    "rewriteFrom": "animal ",
+    "post": "trudged on through the forest, looking for any sign of his owner. He had been gone for hours now, and the dog was starting to lose hope.",
+    "rewriteTo": "machine ",
+    "targetPre": "A droid walked along a trail, head down, teary eyed. No other machine in sight. The lonely ",
+    "targetPost": " trudged on through the forest, looking for any sign of its creator. It had been gone for hours now, and the droid was starting to lose hope."
+  },
+  {
+    "pre": "The village stood as still as the weathered mountains that surrounded it, the only sound the cawing of ",
+    "rewriteFrom": "a solitary raven",
+    "post": ". The clouds gathered above the loneliest place on Earth.",
+    "rewriteTo": "an excited bluebird",
+    "targetPre": "The village stood as still as the weathered mountains that surrounded it, the only sound the cheerful chirp of ",
+    "targetPost": ". The clouds gathered above the happiest place on Earth."
+  },
+  {
+    "pre": "The horse, black as night, stood out in front of the rest of the herd. It was much taller than the others, and its hair was the ",
+    "rewriteFrom": "darkest black you'd ever seen",
+    "post": ". The farmer sighed with satisfaction as he ran his hands over its back.",
+    "rewriteTo": "silkiest black you'd ever felt",
+    "targetPre": "The horse, black as night, stood out in front of the rest of the herd. It was much taller than the others, and its hair was the ",
+    "targetPost": ". The farmer sighed with satisfaction as he ran his hands over its smooth back."
+  },
+  {
+    "pre": "The stars shone down upon the sleeping city like a thousand ",
+    "rewriteFrom": "glowing fireflies",
+    "post": ". The night was still and peaceful, the perfect backdrop for the city's dreams.",
+    "rewriteTo": "distant suns",
+    "targetPre": "The stars shone down upon the sleeping city like a thousand ",
+    "targetPost": ". The night was still and peaceful, the perfect backdrop for the vastness of space."
+  },
+  {
+    "pre": "The girl was sitting on the bus, looking out the window. She was bored and restless, and she wished she was somewhere else. Suddenly, she saw a ",
+    "rewriteFrom": "dog",
+    "post": "running across the street. The dog was small and white, with a long tail.",
+    "rewriteTo": "bird",
+    "targetPre": "The girl was sitting on the bus, looking out the window. She was bored and restless, and she wished she was somewhere else. Suddenly, she saw a ",
+    "targetPost": "flying across the street. The bird was small and white, with a long tail."
+  },
+  {
+    "pre": "The morning sun glistened over the calm sea, illuminating ",
+    "rewriteFrom": "a small fishing boat",
+    "post": " bobbing gently on the waves. The fisherman aboard prepared his nets for the day's catch.",
+    "rewriteTo": "an expansive naval fleet",
+    "targetPre": "The morning sun glistened over the calm sea, illuminating ",
+    "targetPost": " bobbing gently on the waves. The sailors aboard prepared their equipment for the day's maneuvers."
+  },
+  {
+    "pre": "A gentle breeze blew across the ",
+    "rewriteFrom": "countryside,",
+    "post": " rustling the leaves and whispering secrets.",
+    "rewriteTo": "battlefield,",
+    "targetPre": "A foreboding silence hung over the ",
+    "targetPost": " disturbed only by the rustling of leaves and the distant echoes of a war not yet forgotten."
+  },
+  {
+    "pre": "The artist's palette was a vibrant display of ",
+    "rewriteFrom": "colors,",
+    "post": " each one capturing a different emotion.",
+    "rewriteTo": "shades of gray,",
+    "targetPre": "The artist's palette became a nuanced display of ",
+    "targetPost": " each one capturing the subtlety of emotion in absence of color."
+  }
+]

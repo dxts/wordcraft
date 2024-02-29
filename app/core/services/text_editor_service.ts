@@ -672,7 +672,7 @@ export class TextEditorService extends Service {
       }
     }
 
-    this.updatePlainText();
+    return position;
   }
 
   insertSection() {
@@ -713,6 +713,18 @@ export class TextEditorService extends Service {
     const atom = this.buildAtom('choice', text);
     const position = this.insertAtom(atom, insertPosition);
     return () => this.deleteAtPosition(position);
+  }
+
+  insertDeletionAtom(text: string, insertPosition: Mobiledoc.Position) {
+    const atom = this.buildAtom('deletion', text);
+    const position = this.insertAtom(atom, insertPosition);
+    return position;
+  }
+
+  insertAdditionAtom(text: string, insertPosition: Mobiledoc.Position) {
+    const atom = this.buildAtom('addition', text);
+    const position = this.insertAtom(atom, insertPosition);
+    return position;
   }
 
   // tslint:disable-next-line:no-any

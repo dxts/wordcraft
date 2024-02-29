@@ -27,6 +27,7 @@ import {
   metaPromptSchema,
   newStorySchema,
   nextSentenceSchema,
+  propagateRewriteSchema,
   replaceSchema,
   rewriteEndOfSentenceSchema,
   rewriteSelectionSchema,
@@ -47,6 +48,7 @@ import rewriteEndOfSentenceJson from './json/rewrite_end_of_sentence.json';
 import rewriteSelectionJson from './json/rewrite_selection.json';
 import rewriteSentenceJson from './json/rewrite_sentence.json';
 import suggestRewriteJson from './json/suggest_rewrite.json';
+import propagateRewriteJson from './json/propagate_rewrite.json';
 
 import {OperationType} from '@core/shared/types';
 
@@ -104,6 +106,11 @@ export class WordcraftContext {
       OperationType.SUGGEST_REWRITE,
       suggestRewriteSchema,
       suggestRewriteJson
+    );
+    this.registerExamples(
+      OperationType.PROPAGATE_REWRITE,
+      propagateRewriteSchema,
+      propagateRewriteJson
     );
   }
 
@@ -178,3 +185,4 @@ export type RewriteEndOfSentenceExample = z.infer<
 export type RewriteSelectionExample = z.infer<typeof rewriteSelectionSchema>;
 export type RewriteSentenceExample = z.infer<typeof rewriteSentenceSchema>;
 export type SuggestRewriteExample = z.infer<typeof suggestRewriteSchema>;
+export type PropagateRewriteExample = z.infer<typeof propagateRewriteSchema>;

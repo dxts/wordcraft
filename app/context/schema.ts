@@ -106,3 +106,12 @@ export const suggestRewriteSchema = z.object({
     word: sizeSchema,
   }),
 });
+
+export const propagateRewriteSchema = z.object({
+  pre: z.string(),
+  rewriteFrom: z.string(),
+  post: z.string(),
+  rewriteTo: z.string(),
+  targetPre: z.string(),
+  targetPost: z.string(),
+});

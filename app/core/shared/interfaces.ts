@@ -165,6 +165,13 @@ export interface SuggestRewritePromptParams {
   textType: TextType;
 }
 
+export interface PropagateRewritePromptParams {
+  pre: string;
+  post: string;
+  rewriteFrom: string;
+  rewriteTo: string;
+}
+
 export interface DialogMessage {
   content: string;
   author: 'model' | 'user';
