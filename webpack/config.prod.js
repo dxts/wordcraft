@@ -26,7 +26,9 @@ module.exports = {
   module: shared.module,
   resolve: shared.resolve,
   plugins: [
-    new DotEnvPlugin(),
+    new DotEnvPlugin({
+      path: shared.resolveDir('../.env'),
+    }),
     new HtmlWebpackPlugin({
       inject: false,
       template: shared.resolveDir('../app/static/index.html'),
@@ -36,6 +38,10 @@ module.exports = {
         {
           from: shared.resolveDir('../app/static/global.css'),
           to: shared.resolveDir('../dist/global.css'),
+        },
+        {
+          from: shared.resolveDir('../app/static/favicon.ico'),
+          to: shared.resolveDir('../dist/favicon.ico'),
         },
       ],
     }),
