@@ -1,5 +1,5 @@
 import {computed, decorate} from 'mobx';
-import {diffWords, diffWordsWithSpace} from 'diff';
+import {Change, diffWords} from 'diff';
 import {createModelResult} from '@models/utils';
 import * as helpers from '../operation_data/helpers';
 import {
@@ -7,7 +7,6 @@ import {
   OperationSite,
   OperationTrigger,
   OperationType,
-  TextType,
 } from '../shared/types';
 
 import {ChoiceOperation} from './choice_operation';
@@ -107,7 +106,7 @@ export class PropagateRewriteOperation extends ChoiceOperation {
     // do a diff of the original text and the new text
     const originalText = helpers.getAllText(this.getOperationData());
 
-    const diff = diffWordsWithSpace(originalText, choice.text);
+    let diff = this.diffText(originalText, choice.text);
 
     // delete the original text from the document
     let position = this.textEditorService.deleteDocument();
@@ -131,6 +130,60 @@ export class PropagateRewriteOperation extends ChoiceOperation {
         );
       }
     }
+  }
+
+  diffText(originalText: string, newText: string): Change[] {
+    // comparing word by word
+    const diff = diffWords(originalText, newText);
+
+    const compactedDiff: Change[] = [];
+
+    // merge contiguous runs of alternating added/removed text into a single added and removed change
+    let added: Change;
+    let removed: Change;
+    for (let i = 0; i < diff.length; i++) {
+      if (diff[i].added) {
+        // combine with previous added
+        if (added === undefined) {
+          added = diff[i];
+        } else {
+          added.value += diff[i].value;
+        }
+      } else if (diff[i].removed) {
+        // combine with previous removed
+        if (removed === undefined) {
+          removed = diff[i];
+        } else {
+          removed.value += diff[i].value;
+        }
+      } else {
+        if (diff[i].value === ' ') {
+          // combine with previous added or removed
+          if (added !== undefined) {
+            added.value += diff[i].value;
+          }
+          if (removed !== undefined) {
+            removed.value += diff[i].value;
+          }
+          if (added === undefined && removed === undefined) {
+            compactedDiff.push(diff[i]);
+          }
+        } else {
+          // push accumulated added and removed
+          if (removed !== undefined) {
+            compactedDiff.push(removed);
+            removed = undefined;
+          }
+          if (added !== undefined) {
+            compactedDiff.push(added);
+            added = undefined;
+          }
+          compactedDiff.push(diff[i]);
+        }
+      }
+    }
+
+    return compactedDiff;
   }
 
   onSelectChoice(choice: ModelResult) {

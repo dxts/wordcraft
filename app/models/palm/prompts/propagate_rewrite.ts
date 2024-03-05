@@ -1,7 +1,7 @@
 import {shuffle} from '@lib/utils';
 import {PropagateRewritePromptParams} from '@core/shared/interfaces';
 import {PropagateRewriteExample, WordcraftContext} from '../../../context';
-import {ModelResults, OperationType} from '@core/shared/types';
+import {OperationType} from '@core/shared/types';
 import {PalmModel} from '..';
 
 export function makePromptHandler(model: PalmModel, context: WordcraftContext) {
@@ -12,12 +12,18 @@ export function makePromptHandler(model: PalmModel, context: WordcraftContext) {
 
     const textWithBlank = model.insertBlank(pre, post);
     const prefix = model.getStoryPrefix();
-    const rewrittenPiece = `The blank was rewritten from: "${rewriteFrom}" to: "${rewriteTo}"`;
+    const rewriteFromText = `The phrase in the blank was previously:\n${model.wrap(
+      rewriteFrom
+    )}`;
+    const rewriteToText = `The phrase in the blank has been rewritten to:\n${model.wrap(
+      rewriteTo
+    )}`;
+
     const suffix = 'The story adapted to fit the rewrite is: ';
 
-    return `${prefix} ${model.wrap(
+    return `${prefix}\n${model.wrap(
       textWithBlank
-    )}\n${rewrittenPiece}\n${suffix} `;
+    )}\n${rewriteFromText}\n${rewriteToText}\n${suffix}`;
   }
 
   function makePromptContext() {
@@ -31,9 +37,9 @@ export function makePromptHandler(model: PalmModel, context: WordcraftContext) {
       const example = shuffled[i];
       const prompt = makePrompt(example);
 
-      const promptResponse = `${example.pre}${example.rewriteTo}${example.post}`;
+      const promptResponse = `${example.targetPre}${example.rewriteTo}${example.targetPost}`;
 
-      promptContext += `${prompt} \n${model.wrap(promptResponse)}\n\n`;
+      promptContext += `${prompt}\n${model.wrap(promptResponse)}\n\n`;
     }
 
     return promptContext;

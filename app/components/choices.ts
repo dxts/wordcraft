@@ -274,7 +274,11 @@ export class ChoicesComponent extends MobxLitElement {
   }
 
   private renderText(text: string) {
-    const brokenOnNewlines = text.split('\n');
+    // render only first 400 characters
+    const shortened = text.slice(0, 400) + (text.length > 400 ? '...' : '');
+
+    const brokenOnNewlines = shortened.split('\n');
+
     return brokenOnNewlines.map((p) => {
       return html`<p class="choice-paragraph">${p}</p>`;
     });

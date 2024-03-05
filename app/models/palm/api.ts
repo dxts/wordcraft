@@ -78,10 +78,10 @@ const LOCATION_ID = 'europe-west3';
 
 const API_URL = `https://europe-west3-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/${LOCATION_ID}/publishers/google`;
 
-const TEXT_MODEL_ID = 'text-bison@001';
+const TEXT_MODEL_ID = 'text-bison@002';
 const TEXT_METHOD = 'predict';
 
-const DIALOG_MODEL_ID = 'chat-bison@001';
+const DIALOG_MODEL_ID = 'chat-bison@002';
 const DIALOG_METHOD = 'predict';
 
 export async function callTextModel(prompt: string, params: ModelParams) {
