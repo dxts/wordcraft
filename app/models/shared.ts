@@ -29,3 +29,12 @@ export const wordinessOptions: WordinessOption[] = [
   {text: 'about twenty words', max: 20},
   {text: 'many many words', max: Infinity},
 ];
+
+export interface ModelParams {
+  temperature?: number;
+  topK?: number;
+  topP?: number;
+  candidateCount?: number;
+  maxOutputTokens?: number;
+  logprobs?: number;
+}

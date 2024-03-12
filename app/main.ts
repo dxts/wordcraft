@@ -30,6 +30,7 @@ import {makeServiceProvider} from './service_provider';
 import {InitializationService} from '@services/initialization_service';
 import {PalmModel} from '@models/palm';
 import {PalmDialogModel} from '@models/palm/dialog';
+import {OpenAIModel} from '@models/openai';
 
 wordcraftCore.initialize(makeServiceProvider);
 
@@ -56,7 +57,8 @@ operationsService.registerOperations(
 
 // Register prompts with models
 const modelService = wordcraftCore.getService(ModelService);
-modelService.useModel(PalmModel);
+// modelService.useModel(PalmModel);
+modelService.useModel(OpenAIModel);
 modelService.useDialogModel(PalmDialogModel);
 
 // Initialize the app after page load, so that all of the javascript is present

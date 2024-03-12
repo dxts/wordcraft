@@ -38,6 +38,7 @@ import {ContextService, StatusService} from '@services/services';
 import {ModelResults} from '@core/shared/types';
 
 import {dedupeResults} from './utils';
+import {ModelParams} from './shared';
 
 interface ServiceProvider {
   contextService: ContextService;
@@ -58,18 +59,20 @@ export abstract class Model {
     this.makePromptHandler = this.makePromptHandler.bind(this);
   }
 
-  wrap(text: string) {
-    return text;
-  }
+  abstract wrap(text: string): string;
 
-  getBlank() {
-    return '';
-  }
+  abstract getBlank(): string;
 
   abstract getStoryPrefix(): string;
 
+  abstract getPromptPreamble(): string;
+
   insertBlank(pre: string, post: string) {
     return `${pre}${this.getBlank()}${post}`;
+  }
+
+  addNewlines(...strings: string[]) {
+    return strings.join('\n');
   }
 
   get contextService() {
@@ -94,12 +97,19 @@ export abstract class Model {
     };
   }
 
-  parseResults(results: ModelResults) {
+  parseResults(
+    results: ModelResults,
+    inputPrompt: string = '',
+    useDelimiters: boolean = true
+  ): ModelResults {
     return results;
   }
 
-  // tslint:disable-next-line:no-any
-  query(prompt: string | string[]): Promise<ModelResults> {
+  query(
+    promptText: string | string[],
+    params: Partial<ModelParams> = {},
+    shouldParse = true
+  ): Promise<ModelResults> {
     throw new Error('Not yet implemented');
   }
 

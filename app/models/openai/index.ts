@@ -1,21 +1,20 @@
-/**
- * @license
- *
- * Copyright 2023 Google LLC.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ==============================================================================
- */
+import {ContextService, StatusService} from '@core/services/services';
+import {ModelResults} from '@core/shared/types';
+import {startsWithPunctuation} from '@lib/parse_sentences/utils';
+import {Model} from '@models/model';
+import {ModelParams} from '@models/shared';
+import {
+  createModelResults,
+  dedupeResults,
+  getTextBetweenDelimiters,
+  textContainsSpecialCharacters,
+} from '@models/utils';
+
+import {
+  callChatCompletionsModel,
+  CCModelParams,
+  ChatCompletionsResponse,
+} from './api';
 
 import {makePromptHandler as continuation} from '../prompts/continue';
 import {makePromptHandler as elaborate} from '../prompts/elaborate';
@@ -31,33 +30,17 @@ import {makePromptHandler as rewriteSelection} from '../prompts/rewrite_selectio
 import {makePromptHandler as rewriteSentence} from '../prompts/rewrite_sentence';
 import {makePromptHandler as suggestRewrite} from '../prompts/suggest_rewrite';
 import {makePromptHandler as propagateRewrite} from '../prompts/propagate_rewrite';
-import {ModelResults} from '@core/shared/types';
-import {Model} from '../model';
-import {callTextModel, TextBisonResponse} from './api';
-import {
-  createModelResults,
-  dedupeResults,
-  getTextBetweenDelimiters,
-  textContainsSpecialCharacters,
-} from '../utils';
 
-import {ContextService, StatusService} from '@services/services';
-import {startsWithPunctuation} from '@lib/parse_sentences/utils';
-import {ModelParams} from '@models/shared';
-
+const BLANK = '____';
 const D0 = '{';
 const D1 = '}';
-const BLANK = '____';
 
 interface ServiceProvider {
   contextService: ContextService;
   statusService: StatusService;
 }
 
-/**
- * A Model representing PaLM API.
- */
-export class PalmModel extends Model {
+export class OpenAIModel extends Model {
   constructor(serviceProvider: ServiceProvider) {
     super(serviceProvider);
   }
@@ -66,41 +49,33 @@ export class PalmModel extends Model {
     return BLANK;
   }
 
+  override wrap(text: string): string {
+    return `${D0}${text}${D1}`;
+  }
+
+  override getPromptPreamble(): string {
+    return 'You are an expert writing assistant, and can expertly write and edit stories.\n\n';
+  }
+
   override getStoryPrefix() {
     return 'Story: ';
   }
 
-  override getPromptPreamble() {
-    return 'I am an expert writing assistant, and can expertly write and edit stories.\n\n';
-  }
-
-  override wrap(text: string) {
-    return `${D0}${text}${D1}`;
-  }
-
-  override insertBlank(pre: string, post: string) {
-    return `${pre}${BLANK}${post}`;
-  }
-
-  override addNewlines(...strings: string[]) {
-    return strings.join('\n');
-  }
-
   override parseResults(
     results: ModelResults,
-    modelInputText = '',
-    useDelimiters = true
+    inputPrompt: string = '',
+    useDelimiters: boolean = true
   ): ModelResults {
     const parsed = results
       .map((result) => {
-        if (modelInputText) {
-          result.text = result.text.replace(modelInputText, '');
+        if (inputPrompt) {
+          result.text = result.text.replace(inputPrompt, '');
         }
         if (useDelimiters) {
           const text =
             getTextBetweenDelimiters(result.text, D0, D1) || result.text;
 
-          return {...result, text};
+          return {...result, text: text};
         } else {
           // First, trim any excess spaces
           let trimmedText = result.text.trim();
@@ -126,25 +101,19 @@ export class PalmModel extends Model {
 
   override async query(
     promptText: string,
-    params: Partial<ModelParams> = {},
-    shouldParse = true
-  ) {
-    let temperature = (params as any).temperature;
-    temperature = temperature === undefined ? 1 : temperature;
-
-    const modelParams = {
-      ...params,
-      temperature: temperature,
-    };
+    params?: Partial<ModelParams>,
+    shouldParse?: boolean
+  ): Promise<ModelResults> {
+    const modelParams = transformModelParams(params);
 
     console.log('🚀 prompt text: ', promptText);
 
-    const res = await callTextModel(promptText, modelParams);
-    const response: TextBisonResponse = await res.json();
+    const res = await callChatCompletionsModel(promptText, modelParams);
+    const response: ChatCompletionsResponse = await res.json();
     console.log('🚀 model results: ', response);
 
-    const responseText = response.predictions?.length
-      ? response.predictions.map((prediction) => prediction.content)
+    const responseText = response.choices?.length
+      ? response.choices.map((choice) => choice.message.content)
       : [];
 
     const results = createModelResults(responseText);
@@ -170,4 +139,18 @@ export class PalmModel extends Model {
   override rewriteSentence = this.makePromptHandler(rewriteSentence);
   override suggestRewrite = this.makePromptHandler(suggestRewrite);
   override propagateRewrite = this.makePromptHandler(propagateRewrite);
+}
+
+function transformModelParams(
+  p: Partial<ModelParams>
+): Required<CCModelParams> {
+  return {
+    max_tokens: p?.maxOutputTokens,
+    n: p?.candidateCount,
+    temperature: p?.temperature,
+    top_p: p?.topP,
+    top_k: p?.topK,
+    logprobs: p?.logprobs && p?.logprobs > 0 ? true : false,
+    top_logprobs: p?.logprobs && p?.logprobs > 0 ? p.logprobs : undefined,
+  };
 }

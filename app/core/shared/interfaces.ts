@@ -177,6 +177,8 @@ export interface DialogMessage {
   author: 'model' | 'user';
 }
 
+export type DialogMessages = DialogMessage[];
+
 export interface DialogParams {
-  messages: DialogMessage[];
+  messages: DialogMessages;
 }

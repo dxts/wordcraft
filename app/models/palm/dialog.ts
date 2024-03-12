@@ -19,10 +19,11 @@
 
 import {DialogParams} from '@core/shared/interfaces';
 import {DialogModel} from '../dialog_model';
-import {callDialogModel, ChatBisonResponse, ModelParams} from './api';
+import {callDialogModel, ChatBisonResponse} from './api';
 import {createModelResults} from '../utils';
 
 import {ContextService, StatusService} from '@services/services';
+import {ModelParams} from '@models/shared';
 
 interface ServiceProvider {
   contextService: ContextService;

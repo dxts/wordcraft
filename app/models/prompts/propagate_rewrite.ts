@@ -1,10 +1,10 @@
 import {shuffle} from '@lib/utils';
 import {PropagateRewritePromptParams} from '@core/shared/interfaces';
-import {PropagateRewriteExample, WordcraftContext} from '../../../context';
+import {PropagateRewriteExample, WordcraftContext} from '../../context';
 import {OperationType} from '@core/shared/types';
-import {PalmModel} from '..';
+import {Model} from '..';
 
-export function makePromptHandler(model: PalmModel, context: WordcraftContext) {
+export function makePromptHandler(model: Model, context: WordcraftContext) {
   function makePrompt(
     example: Omit<PropagateRewriteExample, 'targetPre' | 'targetPost'>
   ) {

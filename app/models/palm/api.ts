@@ -17,19 +17,18 @@
  * ==============================================================================
  */
 
-import {DialogMessage, DialogParams} from '@core/shared/interfaces';
+import {DialogMessages, DialogParams} from '@core/shared/interfaces';
 
-export const BLOCK_CONFIDENCE_THRESHOLDS = [
+const BLOCK_CONFIDENCE_THRESHOLDS = [
   'BLOCK_CONFIDENCE_THRESHOLD_UNSPECIFIED',
   'BLOCK_LOW_MEDIUM_AND_HIGH_HARM_CONFIDENCE',
   'BLOCK_MEDIUM_AND_HIGH_HARM_CONFIDENCE',
   'BLOCK_HIGH_HARM_CONFIDENCE_ONLY',
   'BLOCK_NONE',
 ];
-export type BlockConfidenceThreshold =
-  (typeof BLOCK_CONFIDENCE_THRESHOLDS)[number];
+type BlockConfidenceThreshold = (typeof BLOCK_CONFIDENCE_THRESHOLDS)[number];
 
-export const SAFETY_CATEGORIES = [
+const SAFETY_CATEGORIES = [
   'HATE',
   'TOXICITY',
   'VIOLENCE',
@@ -37,39 +36,41 @@ export const SAFETY_CATEGORIES = [
   'MEDICAL',
   'DANGEROUS',
 ];
-export type SafetyCategory = (typeof SAFETY_CATEGORIES)[number];
+type SafetyCategory = (typeof SAFETY_CATEGORIES)[number];
 
-export interface SafetySetting {
+interface SafetySetting {
   category: number;
   threshold: BlockConfidenceThreshold;
 }
 
-export interface ModelParams {
+interface PalmModelParams {
   topK?: number;
   topP?: number;
   candidateCount?: number;
   maxOutputTokens?: number;
   temperature?: number;
   safetySettings?: SafetySetting[];
+  logprobs?: number;
 }
 
-const DEFAULT_PARAMS: ModelParams = {
+const DEFAULT_PARAMS: PalmModelParams = {
   temperature: 1,
   topK: 40,
   topP: 0.95,
   candidateCount: 8,
 };
 
-const DEFAULT_TEXT_PARAMS: ModelParams = {
+const DEFAULT_TEXT_PARAMS: PalmModelParams = {
   ...DEFAULT_PARAMS,
   maxOutputTokens: 1024,
   safetySettings: SAFETY_CATEGORIES.map((category, index) => ({
     category: index,
     threshold: 'BLOCK_NONE',
   })),
+  logprobs: 0,
 };
 
-const DEFAULT_DIALOG_PARAMS: ModelParams = {
+const DEFAULT_DIALOG_PARAMS: PalmModelParams = {
   ...DEFAULT_PARAMS,
 };
 
@@ -84,7 +85,7 @@ const TEXT_METHOD = 'predict';
 const DIALOG_MODEL_ID = 'chat-bison@002';
 const DIALOG_METHOD = 'predict';
 
-export async function callTextModel(prompt: string, params: ModelParams) {
+export async function callTextModel(prompt: string, params: PalmModelParams) {
   params = {
     ...DEFAULT_TEXT_PARAMS,
     ...params,
@@ -102,10 +103,7 @@ export async function callTextModel(prompt: string, params: ModelParams) {
   return callApi(TEXT_MODEL_ID, TEXT_METHOD, query);
 }
 
-export async function callDialogModel(
-  dialog: DialogParams,
-  params: ModelParams
-) {
+export async function callDialogModel(dialog: DialogParams, params: PalmModelParams) {
   params = {
     ...DEFAULT_DIALOG_PARAMS,
     ...params,
@@ -138,5 +136,5 @@ export type TextBisonResponse = {
 };
 
 export type ChatBisonResponse = {
-  predictions: {candidates: Array<DialogMessage>}[];
+  predictions: {candidates: DialogMessages}[];
 };

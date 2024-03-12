@@ -17,34 +17,35 @@
  * ==============================================================================
  */
 
-import {ElaboratePromptParams} from '@core/shared/interfaces';
-import {ElaborateExample, WordcraftContext} from '../../../context';
+import {ContinuePromptParams} from '@core/shared/interfaces';
+import {ContinueExample, WordcraftContext} from '../../context';
 import {OperationType} from '@core/shared/types';
-import {PalmModel} from '..';
+import {Model} from '..';
 
-export function makePromptHandler(model: PalmModel, context: WordcraftContext) {
-  function generatePrompt(text: string, subject: string) {
+export function makePromptHandler(model: Model, context: WordcraftContext) {
+  function generatePrompt(text: string) {
     const prefix = model.getStoryPrefix();
-    const suffix = `Describe "${subject}" in more detail.`;
-    return `${prefix} ${model.wrap(text)}\n${suffix}`;
+    const suffix = 'Continue the story: ';
+
+    return `${prefix} ${model.wrap(text)}\n${suffix} `;
   }
 
   function getPromptContext() {
-    const examples = context.getExampleData<ElaborateExample>(
-      OperationType.ELABORATE
+    const examples = context.getExampleData<ContinueExample>(
+      OperationType.CONTINUE
     );
     let promptContext = model.getPromptPreamble();
-    examples.forEach(({text, toElaborate, target}) => {
-      const prompt = generatePrompt(text, toElaborate);
+    examples.forEach(({input, target}) => {
+      const prompt = generatePrompt(input);
       promptContext += `${prompt} ${model.wrap(target)}\n\n`;
     });
     return promptContext;
   }
 
-  return async function elaborate(params: ElaboratePromptParams) {
-    const {text, toElaborate} = params;
+  /** Return the actual prompt handler */
+  return async function continuation(params: ContinuePromptParams) {
     const promptContext = getPromptContext();
-    const prompt = generatePrompt(text, toElaborate);
+    const prompt = generatePrompt(params.text);
     const inputText = promptContext + prompt;
     return model.query(inputText);
   };

@@ -18,12 +18,12 @@
  */
 
 import {NextSentencePromptParams} from '@core/shared/interfaces';
-import {NextSentenceExample, WordcraftContext} from '../../../context';
+import {NextSentenceExample, WordcraftContext} from '../../context';
 import {OperationType} from '@core/shared/types';
-import {PalmModel} from '..';
+import {Model} from '..';
 import {parseSentences} from '@lib/parse_sentences';
 
-export function makePromptHandler(model: PalmModel, context: WordcraftContext) {
+export function makePromptHandler(model: Model, context: WordcraftContext) {
   function generatePrompt(
     textBeforeBlank: string,
     textAfterBlank: string,

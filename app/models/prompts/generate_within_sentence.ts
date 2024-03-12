@@ -20,14 +20,11 @@
 import {isWhitespaceOnly, parseSentences} from '@lib/parse_sentences';
 import {normalizeSentenceSpaces, reverseString, shuffle} from '@lib/utils';
 import {GenerateWithinSentencePromptParams} from '@core/shared/interfaces';
-import {
-  GenerateWithinSentenceExample,
-  WordcraftContext,
-} from '../../../context';
+import {GenerateWithinSentenceExample, WordcraftContext} from '../../context';
 import {OperationType} from '@core/shared/types';
-import {PalmModel} from '..';
+import {Model} from '..';
 
-export function makePromptHandler(model: PalmModel, context: WordcraftContext) {
+export function makePromptHandler(model: Model, context: WordcraftContext) {
   function generatePrompt(
     textBeforeBlank: string,
     textAfterBlank: string,

@@ -18,11 +18,11 @@
  */
 
 import {parseSentences} from '@lib/parse_sentences';
-import {wordinessOptions, WordinessOption} from '../../shared';
+import {wordinessOptions, WordinessOption} from '../shared';
 import {ReplacePromptParams} from '@core/shared/interfaces';
-import {ReplaceExample, WordcraftContext} from '../../../context';
+import {ReplaceExample, WordcraftContext} from '../../context';
 import {OperationType} from '@core/shared/types';
-import {PalmModel} from '..';
+import {Model} from '..';
 
 function nWordsToWordiness(length: number) {
   const index =
@@ -32,7 +32,7 @@ function nWordsToWordiness(length: number) {
 }
 
 // tslint:disable-next-line:enforce-comments-on-exported-symbols
-export function makePromptHandler(model: PalmModel, context: WordcraftContext) {
+export function makePromptHandler(model: Model, context: WordcraftContext) {
   function generatePrompt(
     storyBeforeBlank: string,
     storyAfterBlank: string,

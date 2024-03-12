@@ -17,40 +17,40 @@
  * ==============================================================================
  */
 
-import {NewStoryPromptParams} from '@core/shared/interfaces';
-import {NewStoryExample, WordcraftContext} from '../../../context';
+import {shuffle} from '@lib/utils';
+import {FreeformPromptParams} from '@core/shared/interfaces';
+import {FreeformExample, WordcraftContext} from '../../context';
 import {OperationType} from '@core/shared/types';
-import {PalmModel} from '..';
+import {Model} from '..';
 
-export function makePromptHandler(model: PalmModel, context: WordcraftContext) {
+export function makePromptHandler(model: Model, context: WordcraftContext) {
   function getPromptContext() {
-    const examples = context.getExampleData<NewStoryExample>(
-      OperationType.NEW_STORY
+    const examples = context.getExampleData<FreeformExample>(
+      OperationType.FREEFORM
     );
+    const selected = shuffle(examples).slice(0, 4);
     let promptContext = model.getPromptPreamble();
-    examples.forEach((example) => {
-      const {topic, target} = example;
-      const prompt = generatePrompt(topic);
-      promptContext += `${prompt} ${model.wrap(target)}\n\n`;
+    selected.forEach((example: FreeformExample) => {
+      const prefix = example.prefix;
+      const instruction = example.instruction;
+      const {text, target} = example;
+
+      promptContext += `${prefix} ${model.wrap(
+        text
+      )}\n${instruction} ${model.wrap(target)}\n\n`;
     });
     return promptContext;
   }
 
-  function generatePrompt(topic: string) {
-    const prefix = "Here's a story topic: ";
-    const suffix = 'Tell me a new beginning of a story: ';
-
-    if (topic.trim() === '') {
-      return suffix;
-    } else {
-      return `${prefix}${model.wrap(topic)}\n${suffix}`;
-    }
+  function generatePrompt(text: string, instruction: string) {
+    const prefix = model.getStoryPrefix();
+    return `${prefix} ${text}\n${instruction}`;
   }
 
-  return async function storySeed(params: NewStoryPromptParams) {
-    const {topic} = params;
+  return async function freeform(params: FreeformPromptParams) {
+    const {text, instruction} = params;
     const promptContext = getPromptContext();
-    const prompt = generatePrompt(topic);
+    const prompt = generatePrompt(text, instruction);
     const inputText = promptContext + prompt;
     return model.query(inputText);
   };
